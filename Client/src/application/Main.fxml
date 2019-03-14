@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="324.0" prefWidth="513.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <Button fx:id="connectButton" layoutX="201.0" layoutY="128.0" mnemonicParsing="false" onAction="#connectToServer" prefHeight="69.0" prefWidth="111.0" text="Connect" />
+   </children>
+</AnchorPane>
