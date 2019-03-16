@@ -4,8 +4,8 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
-import application.DialogUtils;
 import javafx.scene.control.Alert.AlertType;
+import main.util.DialogUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,23 +53,6 @@ public class UserDao {
 		user.setLogin(rs.getString("Login"));
 		user.setPassword(rs.getString("Password"));
 		return user;
-	}
-
-	public User getUserByUserNameAndPassword(String login, String password) {
-		try {
-			Connection connection = DatabaseConnection.getInstance().getConnection();
-			PreparedStatement ps = connection.prepareStatement("SELECT * FROM [User] WHERE Login=? AND Password=?");
-			ps.setString(1, login);
-			ps.setString(2, password);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				return extractUserFromResultSet(rs);
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-			DialogUtils.showDialog("Error", ex.getMessage(), AlertType.ERROR);
-		}
-		return null;
 	}
 
 	public Set<User> getAllUsers() {

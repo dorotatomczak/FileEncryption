@@ -1,4 +1,4 @@
-package database;
+package main.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -15,16 +15,12 @@ public class PasswordUtils {
 	private static final SecureRandom RAND = new SecureRandom();
 	private static final int ITERATIONS = 65536;
 	private static final int KEY_LENGTH = 256;
+	private static final int SALT_LENGTH = 32;
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
-	public static Optional<String> generateSalt(final int length) {
+	public static Optional<String> generateSalt() {
 
-		if (length < 1) {
-			System.err.println("error in generateSalt: length must be > 0");
-			return Optional.empty();
-		}
-
-		byte[] salt = new byte[length];
+		byte[] salt = new byte[SALT_LENGTH];
 		RAND.nextBytes(salt);
 
 		return Optional.of(Base64.getEncoder().encodeToString(salt));
