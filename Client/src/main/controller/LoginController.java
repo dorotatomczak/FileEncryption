@@ -1,20 +1,17 @@
 package main.controller;
 
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Button;
-
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import main.util.DialogUtils;
-import main.util.PasswordUtils;
-import database.DatabaseConnection;
-import database.User;
 import javafx.event.ActionEvent;
-
 import javafx.scene.control.PasswordField;
-import database.UserDao;
+import main.database.User;
+import main.database.UserDao;
+import main.util.DialogUtils;
+import main.util.LoggedInUser;
+import main.util.PasswordUtils;
 
 public class LoginController {
 	@FXML
@@ -29,26 +26,34 @@ public class LoginController {
 	// Event Listener on Button[#loginButton].onAction
 	@FXML
 	public void onLoginButtonClick(ActionEvent event) {
+		
+		// TODO w nowym w¹tku przeprowadziæ te operacje, w widoku dodaæ loading
+		// indicator i informacje, co siê teraz robi
+		
 		User user = new UserDao().getUserByLogin(loginField.getText());
+		
+		if(user == null) {
+			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);
+			return;
+		}
+		
 		String saltyhash = user.getPassword();
 		String salt = saltyhash.substring(0, 44);
 		String hash = saltyhash.substring(44);
 		
-		System.out.println("rejestracja, salt: "+salt+"length: "+salt.length());
-		System.out.println("rejestracja, securepass: "+hash+"length: "+hash.length());
-		System.out.println("rejestracja, saltyhash: "+saltyhash+"length: "+saltyhash.length());
-		
 		if (PasswordUtils.verifyPassword(passwordField.getText(), hash, salt)) {
+			LoggedInUser.loggedInUser = user;
 			// TODO przekierowanie do okna g³ównego aplikacji
 		}
 		else {
 			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);
 		}
+		
 	}
 	// Event Listener on Button[#registerButton].onAction
 	@FXML
 	public void onRegisterButtonClick(ActionEvent event) {
 		Stage stage = (Stage) registerButton.getScene().getWindow();
-		SceneSwitcher.switchScene(stage, getClass().getResource("../resource//Registration.fxml"));
+		SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Registration.fxml"));
 	}
 }

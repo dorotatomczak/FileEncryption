@@ -2,14 +2,14 @@ package main.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import main.database.UserDao;
 import main.util.DialogUtils;
 import main.util.PasswordUtils;
+import main.util.RSAKeysUtils;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import database.UserDao;
 import javafx.event.ActionEvent;
 
 public class RegistrationController {
@@ -28,20 +28,22 @@ public class RegistrationController {
 	@FXML
 	public void onRegisterButtonClick(ActionEvent event) {
 
+		// TODO w nowym w¹tku przeprowadziæ te operacje, w widoku dodaæ loading
+		// indicator i informacje, co siê teraz robi
 		if (!isInputValid()) {
 			return;
 		}
+		
+		String login = loginField.getText();
 
 		String salt = PasswordUtils.generateSalt().get();
-		String securePassword = PasswordUtils.hashPassword(loginField.getText(), salt).get();
+		String securePassword = PasswordUtils.hashPassword(login, salt).get();
 		String saltyhash = salt + securePassword;
-		
-		System.out.println("rejestracja, salt: "+salt+"length: "+salt.length());
-		System.out.println("rejestracja, securepass: "+securePassword+"length: "+securePassword.length());
-		System.out.println("rejestracja, saltyhash: "+saltyhash+"length: "+saltyhash.length());
-		
-		if (new UserDao().insertUser(loginField.getText(), saltyhash)) {
-			// TODO Przekierowanie do logowania czy gdzieœ tam
+
+		if (new UserDao().insertUser(login, saltyhash)) {
+			
+			Stage stage = (Stage) registerButton.getScene().getWindow();
+			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Login.fxml"));
 		}
 
 	}

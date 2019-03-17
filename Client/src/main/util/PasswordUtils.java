@@ -14,7 +14,7 @@ public class PasswordUtils {
 
 	private static final SecureRandom RAND = new SecureRandom();
 	private static final int ITERATIONS = 65536;
-	private static final int KEY_LENGTH = 256;
+	private static final int KEY_LENGTH = 32;
 	private static final int SALT_LENGTH = 32;
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
 
