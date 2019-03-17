@@ -23,4 +23,7 @@
 hs_err_pid*
 
 # Generated keys
-Client/keys
+Client/keys/pub/*
+Client/keys/pvt/*
+!Client/keys/pub/.gitkeep
+!Client/keys/pvt/.gitkeep
