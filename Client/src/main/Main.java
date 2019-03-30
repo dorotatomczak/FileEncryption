@@ -20,11 +20,6 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("resource/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			
-			/*User user = new UserDao().getUserByLogin("test1");
-			RSAKeysUtils.generateRSAKeys(user);
-			RSAKeysUtils.decryptPrivateKey(user);*/
-			
 		} catch(Exception e) {;
 			e.printStackTrace();
 		}

@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,6 +19,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -36,14 +36,15 @@ public class RSAKeysUtils {
 	private static final String PATH_PUB = "\\keys\\pub\\";
 	private static final String PATH_PVT = "\\keys\\pvt\\";
 	private static final int VECTOR_SIZE = 8;
-	
+
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-	
+
 	// Converts byte array to hex string
-	// From: http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+	// From:
+	// http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
 	public static String bytesToHex(byte[] bytes) {
 		char[] hexChars = new char[bytes.length * 2];
-		for ( int j = 0; j < bytes.length; j++ ) {
+		for (int j = 0; j < bytes.length; j++) {
 			int v = bytes[j] & 0xFF;
 			hexChars[j * 2] = hexArray[v >>> 4];
 			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -61,9 +62,8 @@ public class RSAKeysUtils {
 			KeyPair kp = kpg.generateKeyPair();
 			PublicKey pub = kp.getPublic();
 			PrivateKey pvt = kp.getPrivate();
-			
-			System.out.println("wygenerowany klucz prywatny: "+bytesToHex(pvt.getEncoded()));
-			
+
+			System.out.println("wygenerowany klucz prywatny: " + bytesToHex(pvt.getEncoded()));
 
 			String workingDir = System.getProperty("user.dir");
 			String pubPath = workingDir + PATH_PUB;
@@ -102,16 +102,17 @@ public class RSAKeysUtils {
 		PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(encodedKey);
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		PrivateKey pvt = kf.generatePrivate(ks);
-		
-		System.out.println("odszyfrowany klucz prywatny: "+bytesToHex(pvt.getEncoded()));
-		
+
+		System.out.println("odszyfrowany klucz prywatny: " + bytesToHex(pvt.getEncoded()));
+
 		return pvt;
 	}
 
 	public static PublicKey loadPublicKey(String login)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		/* Read all the public key bytes */
-		Path path = Paths.get(PATH_PUB + login + ".pub");
+		String workingDir = System.getProperty("user.dir");
+		Path path = Paths.get(workingDir + PATH_PUB + login + ".pub");
 		byte[] bytes = Files.readAllBytes(path);
 
 		/* Generate public key. */
@@ -119,6 +120,12 @@ public class RSAKeysUtils {
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		PublicKey pub = kf.generatePublic(ks);
 		return pub;
+	}
+
+	public static String publicKeyToString(PublicKey pub) throws InvalidKeySpecException, NoSuchAlgorithmException {
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		X509EncodedKeySpec ks = kf.getKeySpec(pub, X509EncodedKeySpec.class);
+		return Base64.getEncoder().encodeToString(ks.getEncoded());
 	}
 
 	// Blowfish, CBC, password (funkcja skrótu: PBKDF2WithHmacSHA512)
@@ -135,14 +142,14 @@ public class RSAKeysUtils {
 		SecureRandom srandom = new SecureRandom();
 		srandom.nextBytes(vector);
 		IvParameterSpec ivSpec = new IvParameterSpec(vector);
-		
-		System.out.println("wygenerowany wektor: "+bytesToHex(vector));
+
+		System.out.println("wygenerowany wektor: " + bytesToHex(vector));
 
 		Cipher cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 		byte[] encoding = cipher.doFinal(pvt.getEncoded());
-		
-		System.out.println("zaszyfrowany klucz prywatny: "+bytesToHex(encoding));
+
+		System.out.println("zaszyfrowany klucz prywatny: " + bytesToHex(encoding));
 
 		// concatenate vector array and encoding array
 		byte[] vectorAndEncodedKey = new byte[vector.length + encoding.length];
@@ -171,9 +178,9 @@ public class RSAKeysUtils {
 		System.arraycopy(vectorAndEncodedKey, 0, vector, 0, vector.length);
 		System.arraycopy(vectorAndEncodedKey, vector.length, encodedKey, 0, encodedKey.length);
 		IvParameterSpec ivSpec = new IvParameterSpec(vector);
-		
-		System.out.println("odczytany wektor: "+bytesToHex(vector));
-		System.out.println("odczytany zaszyfrowany klucz prywatny: "+bytesToHex(encodedKey));
+
+		System.out.println("odczytany wektor: " + bytesToHex(vector));
+		System.out.println("odczytany zaszyfrowany klucz prywatny: " + bytesToHex(encodedKey));
 
 		Cipher cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
@@ -187,5 +194,4 @@ public class RSAKeysUtils {
 		byte[] bytes = Files.readAllBytes(Paths.get(path));
 		return bytes;
 	}
-
 }

@@ -27,3 +27,9 @@ Client/keys/pub/*
 Client/keys/pvt/*
 !Client/keys/pub/.gitkeep
 !Client/keys/pvt/.gitkeep
+
+Server/encrypted/*
+!Server/encrypted/.gitkeep
+
+Client/decrypted/*
+!Client/decrypted/.gitkeep

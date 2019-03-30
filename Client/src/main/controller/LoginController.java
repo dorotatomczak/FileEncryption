@@ -43,7 +43,8 @@ public class LoginController {
 		
 		if (PasswordUtils.verifyPassword(passwordField.getText(), hash, salt)) {
 			LoggedInUser.loggedInUser = user;
-			// TODO przekierowanie do okna g³ównego aplikacji
+			Stage stage = (Stage) loginButton.getScene().getWindow();
+			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Main.fxml"));
 		}
 		else {
 			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);

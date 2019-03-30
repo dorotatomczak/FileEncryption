@@ -2,6 +2,7 @@ package main.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import main.database.User;
 import main.database.UserDao;
 import main.util.DialogUtils;
 import main.util.PasswordUtils;
@@ -39,9 +40,11 @@ public class RegistrationController {
 		String salt = PasswordUtils.generateSalt().get();
 		String securePassword = PasswordUtils.hashPassword(login, salt).get();
 		String saltyhash = salt + securePassword;
+		
+		User user = new User(login, saltyhash);
 
-		if (new UserDao().insertUser(login, saltyhash)) {
-			
+		if (new UserDao().insertUser(user)) {
+			RSAKeysUtils.generateRSAKeys(user);
 			Stage stage = (Stage) registerButton.getScene().getWindow();
 			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Login.fxml"));
 		}
