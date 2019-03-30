@@ -4,7 +4,8 @@ import javafx.fxml.FXML;
 
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
-import main.ConnectTask;
+import main.DecryptTask;
+import main.EncryptTask;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -15,19 +16,32 @@ import javafx.event.ActionEvent;
 
 public class MainController {
 	@FXML
-	private Button connectButton;
+	private Button encryptButton;
+	@FXML
+	private Button decryptButton;
 	
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	// Event Listener on Button[#connectButton].onAction
+	// Event Listener on Button[#encryptButton].onAction
 	@FXML
-	public void connectToServer(ActionEvent event) {
+	public void encryptFile(ActionEvent event) {
         File file = new FileChooser().showOpenDialog(null);
         if (file == null){
             return;
         }
-        // TODO odczyt wybranego algorytmu, trybu i wielkosci bloku
-		Task<Void> connectTask =  new ConnectTask(file, "Blowfish/CBC/NoPadding");
-		executor.submit(connectTask);
+        // TODO odczyt wybranego trybu i dlugosci podbloku dla trybow cfb i ofb
+		Task<Void> encryptTask =  new EncryptTask(file, "Blowfish/CBC/NoPadding");
+		executor.submit(encryptTask);
+	}
+	
+	// Event Listener on Button[#decryptButton].onAction
+	@FXML
+	public void decryptFile(ActionEvent event) {
+        File file = new FileChooser().showOpenDialog(null);
+        if (file == null){
+            return;
+        }
+		Task<Void> decryptTask =  new DecryptTask(file);
+		executor.submit(decryptTask);
 	}
 }

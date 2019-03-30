@@ -7,6 +7,7 @@
 
 <AnchorPane prefHeight="324.0" prefWidth="513.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controller.MainController">
    <children>
-      <Button fx:id="connectButton" layoutX="201.0" layoutY="128.0" mnemonicParsing="false" onAction="#connectToServer" prefHeight="69.0" prefWidth="111.0" text="Connect" />
+      <Button fx:id="encryptButton" layoutX="145.0" layoutY="137.0" mnemonicParsing="false" onAction="#encryptFile" prefHeight="40.0" prefWidth="100.0" text="Encrypt" />
+      <Button fx:id="decryptButton" layoutX="279.0" layoutY="137.0" mnemonicParsing="false" onAction="#decryptFile" prefHeight="40.0" prefWidth="100.0" text="Decrypt" />
    </children>
 </AnchorPane>

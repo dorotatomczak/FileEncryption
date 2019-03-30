@@ -31,5 +31,5 @@ Client/keys/pvt/*
 Server/encrypted/*
 !Server/encrypted/.gitkeep
 
-Client/decrypted/*
-!Client/decrypted/.gitkeep
+Client/encrypted/*
+!Client/encrypted/.gitkeep

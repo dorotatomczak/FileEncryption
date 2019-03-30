@@ -1,4 +1,6 @@
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,13 +37,17 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(PORT)) {
 
 			while (true) {
-				final Socket socket = serverSocket.accept();
-				System.out.println("Received a connection from " + socket);
+				try (Socket socket = serverSocket.accept();
+						DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+						DataInputStream ois = new DataInputStream(socket.getInputStream())) {
 
-				String fileName = receiveAndEncrypt(socket);
-				sendEncrypted(socket, fileName);
+					System.out.println("Received a connection from " + socket);
 
-				socket.close();
+					String fileName = receiveAndEncrypt(ois);
+					sendEncrypted(out, fileName);
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 
 		} catch (IOException | ClassNotFoundException | InvalidKeyException | NoSuchAlgorithmException
@@ -51,64 +57,67 @@ public class Server {
 		}
 	}
 
-	private static void sendEncrypted(Socket socket, String fileName) throws IOException {
-		try (ObjectOutputStream out = new ObjectOutputStream (socket.getOutputStream())){
-			
-			out.writeUTF(fileName);
-			
-			File file = new File("./encrypted/", fileName);
-			
-			//send encrypted file
-			try (FileInputStream fis = new FileInputStream(file)){
-                byte[] buffer = new byte[4096];
-                int readSize;
-                while ((readSize = fis.read(buffer)) != -1) {
-                    out.write(buffer, 0, readSize);
-                }  
+	private static void sendEncrypted(DataOutputStream out, String fileName) throws IOException {
+
+		out.writeUTF(fileName);
+
+		File file = new File("./encrypted/", fileName);
+
+		// send encrypted file
+		try (FileInputStream fis = new FileInputStream(file)) {
+			byte[] buffer = new byte[4096];
+			int readSize;
+			while ((readSize = fis.read(buffer)) != -1) {
+				out.write(buffer, 0, readSize);
 			}
+			System.out.println("Server sent encryptd file");
 		}
 	}
 
-	private static String receiveAndEncrypt(Socket socket) throws IOException, ClassNotFoundException,
+	private static String receiveAndEncrypt(DataInputStream ois) throws IOException, ClassNotFoundException,
 			InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
 			InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
 
-		try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
+		// pobranie informacji o szyfrowaniu
+		Gson gson = new Gson();
+		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
 
-			// pobranie informacji o szyfrowaniu
-			Gson gson = new Gson();
-			EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
+		String fileName = eDetails.getFileName();
+		PublicKey pubKey = publicKeyFromString(eDetails.getRsaPublicKey());
+		String mode = eDetails.getMode();
+		long fileSize = eDetails.getFileSize();
 
-			String fileName = eDetails.getFileName();
-			PublicKey pubKey = publicKeyFromString(eDetails.getRsaPublicKey());
-			String mode = eDetails.getMode();
+		Blowfish blowfish = new Blowfish(mode);
 
-			Blowfish blowfish = new Blowfish(mode);
+		File file = new File("./encrypted/", fileName);
+		file.createNewFile();
 
-			File file = new File("./encrypted/", fileName);
-			file.createNewFile();
+		// dodanie informacji o deszyfrowaniu do pliku
+		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.decryptKey(pubKey));
+		String jsonDDetails = gson.toJson(dDetails);
+		try (FileWriter fw = new FileWriter(file)) {
+			fw.write(jsonDDetails);
+		}
 
-			// dodanie informacji o deszyfrowaniu do pliku
-			DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.decryptKey(pubKey));
-			String jsonDDetails = gson.toJson(dDetails);
-			try (FileWriter fw = new FileWriter(file)) {
-				fw.write(jsonDDetails);
-			}
+		byte[] buffer = new byte[4096];
+		long totalRead=0;
+		int readSize;
 
-			byte[] buffer = new byte[4096];
-			int readSize;
-
-			// odbierz plik od klienta, zaszyfruj go i zapisz na dysku
-			try (OutputStream outputStream = new BufferedOutputStream(
-					new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
-				while ((readSize = ois.read(buffer)) != -1) {
-					outputStream.write(buffer, 0, readSize);
-				}
-
+		// odbierz plik od klienta, zaszyfruj go i zapisz na dysku
+		try (OutputStream outputStream = new BufferedOutputStream(
+				new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
+				
+			while (fileSize > 0 && (readSize = ois.read(buffer, 0, (int)Math.min(buffer.length, fileSize))) != -1)
+			{
+			  outputStream.write(buffer,0,readSize);
+			  fileSize -= readSize;
 			}
 			
-			return fileName;
+			System.out.println("Server received and saved file");
 		}
+
+		return fileName;
+
 	}
 
 	private static PublicKey publicKeyFromString(String pub)
