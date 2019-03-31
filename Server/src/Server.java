@@ -97,6 +97,7 @@ public class Server {
 		String jsonDDetails = gson.toJson(dDetails);
 		try (FileWriter fw = new FileWriter(file)) {
 			fw.write(jsonDDetails);
+			fw.write(System.lineSeparator());
 		}
 
 		byte[] buffer = new byte[4096];
