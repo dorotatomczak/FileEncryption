@@ -30,7 +30,7 @@ public class Blowfish {
 		return cipher;
 	}
 	
-	public String decryptKey(PublicKey rsaPublicKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+	public String encryptKey(PublicKey rsaPublicKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher rsa;
         rsa = Cipher.getInstance("RSA");
@@ -65,6 +65,22 @@ public class Blowfish {
 		r.setSeed(System.currentTimeMillis());
 		byte[] sessionKey = new byte[SESSION_KEY_SIZE];
 		r.nextBytes(sessionKey);
+		System.out.println(bytesToHex(sessionKey));
 		return sessionKey;
+	}
+	
+	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+	// Converts byte array to hex string
+	// From:
+	// http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+	public static String bytesToHex(byte[] bytes) {
+		char[] hexChars = new char[bytes.length * 2];
+		for (int j = 0; j < bytes.length; j++) {
+			int v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
 	}
 }

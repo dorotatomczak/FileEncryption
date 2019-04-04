@@ -7,24 +7,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -75,8 +68,7 @@ public class RSAKeysUtils {
 
 			saveToFile(pvtPath + login, encodedPvtKey);
 
-		} catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException
-				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -96,8 +88,18 @@ public class RSAKeysUtils {
 		}
 	}
 
-	public static PrivateKey loadPrivateKey(byte[] encodedKey)
-			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	public static byte[] decryptKey(User user, String key) throws Exception{
+
+		PrivateKey pvt;
+		pvt = decryptPrivateKey(user);
+		Cipher cipher = Cipher.getInstance("RSA");
+		cipher.init(Cipher.DECRYPT_MODE, pvt);
+		byte[] sessionKey = cipher.doFinal(Base64.getDecoder().decode(key));
+		System.out.println("odszyfrowany klucz sesyjny: "+bytesToHex(sessionKey));
+		return sessionKey;
+	}
+
+	public static PrivateKey loadPrivateKey(byte[] encodedKey) throws Exception {
 		/* Generate private key. */
 		PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(encodedKey);
 		KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -108,8 +110,7 @@ public class RSAKeysUtils {
 		return pvt;
 	}
 
-	public static PublicKey loadPublicKey(String login)
-			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	public static PublicKey loadPublicKey(String login) throws Exception {
 		/* Read all the public key bytes */
 		String workingDir = System.getProperty("user.dir");
 		Path path = Paths.get(workingDir + PATH_PUB + login + ".pub");
@@ -122,16 +123,14 @@ public class RSAKeysUtils {
 		return pub;
 	}
 
-	public static String publicKeyToString(PublicKey pub) throws InvalidKeySpecException, NoSuchAlgorithmException {
+	public static String publicKeyToString(PublicKey pub) throws Exception {
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		X509EncodedKeySpec ks = kf.getKeySpec(pub, X509EncodedKeySpec.class);
 		return Base64.getEncoder().encodeToString(ks.getEncoded());
 	}
 
 	// Blowfish, CBC, password (funkcja skrótu: PBKDF2WithHmacSHA512)
-	private static byte[] encryptPrivateKey(User user, PrivateKey pvt)
-			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+	private static byte[] encryptPrivateKey(User user, PrivateKey pvt) throws Exception {
 
 		// get key
 		byte[] key = user.getPassword().getBytes();
@@ -159,9 +158,7 @@ public class RSAKeysUtils {
 		return vectorAndEncodedKey;
 	}
 
-	public static PrivateKey decryptPrivateKey(User user) throws NoSuchAlgorithmException, NoSuchPaddingException,
-			InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
-			InvalidKeySpecException, IOException {
+	public static PrivateKey decryptPrivateKey(User user) throws Exception {
 		String workingDir = System.getProperty("user.dir");
 		String path = workingDir + PATH_PVT + user.getLogin();
 

@@ -22,13 +22,12 @@ public class DecryptionDetails {
 		this.mode = mode;
 	}
 
-	public String getRsaPublicKey() {
+	public String getSessionKey() {
 		return sessionKey;
 	}
 
-	public void setRsaPublicKey(String rsaPublicKey) {
-		this.sessionKey = rsaPublicKey;
+	public void setSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
 	}
 
 }
-

@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.ServerSocket;
@@ -72,6 +70,9 @@ public class Server {
 			}
 			System.out.println("Server sent encryptd file");
 		}
+		
+		//delete file
+		file.delete();
 	}
 
 	private static String receiveAndEncrypt(DataInputStream ois) throws IOException, ClassNotFoundException,
@@ -93,7 +94,7 @@ public class Server {
 		file.createNewFile();
 
 		// dodanie informacji o deszyfrowaniu do pliku
-		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.decryptKey(pubKey));
+		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.encryptKey(pubKey));
 		String jsonDDetails = gson.toJson(dDetails);
 		try (FileWriter fw = new FileWriter(file)) {
 			fw.write(jsonDDetails);
@@ -101,7 +102,6 @@ public class Server {
 		}
 
 		byte[] buffer = new byte[4096];
-		long totalRead=0;
 		int readSize;
 
 		// odbierz plik od klienta, zaszyfruj go i zapisz na dysku
@@ -114,7 +114,7 @@ public class Server {
 			  fileSize -= readSize;
 			}
 			
-			System.out.println("Server received and saved file");
+			System.out.println("Server received, encrypted and saved file");
 		}
 
 		return fileName;
