@@ -88,14 +88,22 @@ public class RSAKeysUtils {
 		}
 	}
 
-	public static byte[] decryptKey(User user, String key) throws Exception{
+	public static byte[] decrypt(User user, String data) throws Exception{
 
 		PrivateKey pvt;
 		pvt = decryptPrivateKey(user);
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, pvt);
-		byte[] sessionKey = cipher.doFinal(Base64.getDecoder().decode(key));
-		System.out.println("odszyfrowany klucz sesyjny: "+bytesToHex(sessionKey));
+		byte[] sessionKey = cipher.doFinal(Base64.getDecoder().decode(data));
+		return sessionKey;
+	}
+	
+	public static byte[] decrypt(User user, byte[] data) throws Exception {
+		PrivateKey pvt;
+		pvt = decryptPrivateKey(user);
+		Cipher cipher = Cipher.getInstance("RSA");
+		cipher.init(Cipher.DECRYPT_MODE, pvt);
+		byte[] sessionKey = cipher.doFinal(data);
 		return sessionKey;
 	}
 

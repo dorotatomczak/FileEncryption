@@ -20,7 +20,7 @@ public class Blowfish {
 	public Blowfish(DecryptionDetails dDetails) throws Exception {
 
 		
-		byte[] key = RSAKeysUtils.decryptKey(LoggedInUser.loggedInUser, dDetails.getSessionKey());
+		byte[] key = RSAKeysUtils.decrypt(LoggedInUser.loggedInUser, dDetails.getSessionKey());
 		byte[] vector = Base64.getDecoder().decode(dDetails.getVector());
 		
 		System.out.println(RSAKeysUtils.bytesToHex(key));

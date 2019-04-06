@@ -4,7 +4,6 @@ public class DecryptionDetails {
 	private String mode;
 	private String sessionKey;
 	private String vector;
-	private transient long skipBytes;
 	
 	// TODO dodac pola
 	public DecryptionDetails() {
@@ -42,12 +41,5 @@ public class DecryptionDetails {
 		this.vector = vector;
 	}
 
-	public long getSkipBytes() {
-		return skipBytes;
-	}
-
-	public void setSkipBytes(long skipBytes) {
-		this.skipBytes = skipBytes;
-	}
 }
 

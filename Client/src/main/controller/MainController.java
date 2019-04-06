@@ -30,7 +30,7 @@ public class MainController {
             return;
         }
         // TODO odczyt wybranego trybu i dlugosci podbloku dla trybow cfb i ofb
-		Task<Void> encryptTask =  new EncryptTask(file, "Blowfish/CBC/NoPadding");
+		Task<Void> encryptTask =  new EncryptTask(file, "Blowfish/CBC/PKCS5Padding");
 		executor.submit(encryptTask);
 	}
 	
