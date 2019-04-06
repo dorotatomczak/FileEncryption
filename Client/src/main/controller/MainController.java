@@ -37,6 +37,7 @@ public class MainController {
 	// Event Listener on Button[#decryptButton].onAction
 	@FXML
 	public void decryptFile(ActionEvent event) {
+		//TODO set initial directory na encrypted
         File file = new FileChooser().showOpenDialog(null);
         if (file == null){
             return;

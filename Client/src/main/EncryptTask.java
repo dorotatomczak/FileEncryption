@@ -83,7 +83,7 @@ public class EncryptTask extends Task<Void> {
 			while ((readSize = ois.read(buffer)) != -1) {
 				fos.write(buffer, 0, readSize);
 			}
-			System.out.println("Client received decrypted file");
+			System.out.println("Client received encrypted file");
 		}
 	}
 }

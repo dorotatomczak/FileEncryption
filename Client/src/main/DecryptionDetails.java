@@ -1,19 +1,21 @@
 package main;
 
-
 public class DecryptionDetails {
 	private String mode;
 	private String sessionKey;
+	private String vector;
+	private transient long skipBytes;
 	
 	// TODO dodac pola
 	public DecryptionDetails() {
 
 	}
 
-	public DecryptionDetails(String mode, String sessionKey) {
+	public DecryptionDetails(String mode, String sessionKey, String vector) {
 		super();
 		this.mode = mode;
 		this.sessionKey = sessionKey;
+		this.vector = vector;
 	}
 
 	public String getMode() {
@@ -32,5 +34,20 @@ public class DecryptionDetails {
 		this.sessionKey = sessionKey;
 	}
 
+	public String getVector() {
+		return vector;
+	}
+
+	public void setVector(String vector) {
+		this.vector = vector;
+	}
+
+	public long getSkipBytes() {
+		return skipBytes;
+	}
+
+	public void setSkipBytes(long skipBytes) {
+		this.skipBytes = skipBytes;
+	}
 }
 
