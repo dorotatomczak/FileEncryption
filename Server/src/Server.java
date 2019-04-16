@@ -1,34 +1,27 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
 import com.google.gson.Gson;
 
 public class Server {
 
 	static final int PORT = 1234;
+	private static final String FILE_TO_ENCRYPT_PATH = "C:\\Users\\Dorota\\Pictures\\100lat.png";
 
 	public static void main(String[] args) {
 
@@ -79,12 +72,14 @@ public class Server {
 		Gson gson = new Gson();
 		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
 
-		String fileName = eDetails.getFileName();
 		PublicKey pubKey = publicKeyFromString(eDetails.getRsaPublicKey());
 		String mode = eDetails.getMode();
-		long fileSize = eDetails.getFileSize();
 
 		Blowfish blowfish = new Blowfish(mode);
+
+		File fileToEncrypt = new File(FILE_TO_ENCRYPT_PATH);
+		String fileName = eDetails.getFileName() + "."+ getFileExtension(fileToEncrypt.getName());
+		System.out.println(fileName);
 
 		File file = new File(".", "tmp");
 		file.createNewFile();
@@ -103,16 +98,17 @@ public class Server {
 		byte[] buffer = new byte[4096];
 		int readSize;
 
-		// odbierz plik od klienta, zaszyfruj go i zapisz na dysku
-		try (OutputStream outputStream = new BufferedOutputStream(
-				new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
+		// wczytaj plik, zaszyfruj go i zapisz na dysku
+		try (FileInputStream fileInputStream = new FileInputStream(fileToEncrypt);
+				BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+				OutputStream outputStream = new BufferedOutputStream(
+						new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
 
-			while (fileSize > 0 && (readSize = ois.read(buffer, 0, (int) Math.min(buffer.length, fileSize))) != -1) {
+			while ((readSize = bufferedInputStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, readSize);
-				fileSize -= readSize;
 			}
 
-			System.out.println("Server received, encrypted and saved file");
+			System.out.println("Server encrypted and saved file");
 		}
 
 		return fileName;
@@ -137,6 +133,16 @@ public class Server {
 		result[3] = (byte) ((data & 0x000000FF) >> 0);
 
 		return result;
+	}
+
+	private static String getFileExtension(String fileName) {
+		String extension = "";
+
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+			extension = fileName.substring(i + 1);
+		}
+		return extension;
 	}
 
 }

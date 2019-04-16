@@ -4,19 +4,17 @@ public class EncryptionDetails {
 	private String mode;
 	private String rsaPublicKey;
 	private String fileName;
-	private long fileSize;
 
 	// TODO dodac pola
 	public EncryptionDetails() {
 
 	}
 
-	public EncryptionDetails(String mode, String rsaPublicKey, String fileName, long fileSize) {
+	public EncryptionDetails(String mode, String rsaPublicKey, String fileName) {
 		super();
 		this.mode = mode;
 		this.rsaPublicKey = rsaPublicKey;
 		this.fileName = fileName;
-		this.fileSize = fileSize;
 	}
 
 	public String getMode() {
@@ -42,12 +40,5 @@ public class EncryptionDetails {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
-	public long getFileSize() {
-		return fileSize;
-	}
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
 }

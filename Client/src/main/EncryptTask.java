@@ -20,11 +20,9 @@ import main.util.RSAKeysUtils;
 public class EncryptTask extends Task<Void> {
 
 	private static final int port = 1234;
-	private File file;
 	private String mode;
 
-	public EncryptTask(File file, String mode) {
-		this.file = file;
+	public EncryptTask(String mode) {
 		this.mode = mode;
 	}
 
@@ -35,8 +33,7 @@ public class EncryptTask extends Task<Void> {
 		PublicKey key = RSAKeysUtils.loadPublicKey(LoggedInUser.loggedInUser.getLogin());
 		String keyString = RSAKeysUtils.publicKeyToString(key);
 
-		EncryptionDetails details = new EncryptionDetails(this.mode, keyString, file.getName(), file.length());
-		System.out.println(String.valueOf(file.length()));
+		EncryptionDetails details = new EncryptionDetails(this.mode, keyString, "TODO file name");
 		Gson gson = new Gson();
 		String jsonDetails = gson.toJson(details);
 
@@ -59,15 +56,7 @@ public class EncryptTask extends Task<Void> {
 		// send data
 		out.writeUTF(jsonDetails);
 
-		// send file to encrypt
-		try (FileInputStream fis = new FileInputStream(file)) {
-			byte[] buffer = new byte[4096];
-			int readSize;
-			while ((readSize = fis.read(buffer)) != -1) {
-				out.write(buffer, 0, readSize);
-			}
-			System.out.println("Client sent file to encrypt");
-		}
+		System.out.println("Client sent encryption details");
 	}
 
 	private void receive(DataInputStream ois) throws IOException {

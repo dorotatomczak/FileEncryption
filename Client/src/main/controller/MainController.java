@@ -25,12 +25,8 @@ public class MainController {
 	// Event Listener on Button[#encryptButton].onAction
 	@FXML
 	public void encryptFile(ActionEvent event) {
-        File file = new FileChooser().showOpenDialog(null);
-        if (file == null){
-            return;
-        }
         // TODO odczyt wybranego trybu i dlugosci podbloku dla trybow cfb i ofb
-		Task<Void> encryptTask =  new EncryptTask(file, "Blowfish/CBC/PKCS5Padding");
+		Task<Void> encryptTask =  new EncryptTask("Blowfish/CBC/PKCS5Padding");
 		executor.submit(encryptTask);
 	}
 	
