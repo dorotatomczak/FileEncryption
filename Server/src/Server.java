@@ -43,14 +43,12 @@ public class Server {
 
 					String fileName = receiveAndEncrypt(ois);
 					sendEncrypted(out, fileName);
-				}catch (IOException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 
-		} catch (IOException | ClassNotFoundException | InvalidKeyException | NoSuchAlgorithmException
-				| NoSuchPaddingException | InvalidAlgorithmParameterException | InvalidKeySpecException
-				| IllegalBlockSizeException | BadPaddingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -59,7 +57,7 @@ public class Server {
 
 		out.writeUTF(fileName);
 
-		File file = new File("./encrypted/", fileName);
+		File file = new File(".", "tmp");
 
 		// send encrypted file
 		try (FileInputStream fis = new FileInputStream(file)) {
@@ -70,14 +68,12 @@ public class Server {
 			}
 			System.out.println("Server sent encryptd file");
 		}
-		
-		//delete file
+
+		// delete file
 		file.delete();
 	}
 
-	private static String receiveAndEncrypt(DataInputStream ois) throws IOException, ClassNotFoundException,
-			InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
-			InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException {
+	private static String receiveAndEncrypt(DataInputStream ois) throws Exception {
 
 		// pobranie informacji o szyfrowaniu
 		Gson gson = new Gson();
@@ -90,15 +86,18 @@ public class Server {
 
 		Blowfish blowfish = new Blowfish(mode);
 
-		File file = new File("./encrypted/", fileName);
+		File file = new File(".", "tmp");
 		file.createNewFile();
 
-		// dodanie informacji o deszyfrowaniu do pliku
-		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.encryptKey(pubKey));
+		// dodanie informacji potrzebnych do deszyfracji pliku
+		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.encryptKey(pubKey), blowfish.getVector());
 		String jsonDDetails = gson.toJson(dDetails);
-		try (FileWriter fw = new FileWriter(file)) {
-			fw.write(jsonDDetails);
-			fw.write(System.lineSeparator());
+
+		int jsonSize = (int) jsonDDetails.getBytes().length;
+
+		try (FileOutputStream fos = new FileOutputStream(file);) {
+			fos.write(intToByteArray(jsonSize));
+			fos.write(jsonDDetails.getBytes());
 		}
 
 		byte[] buffer = new byte[4096];
@@ -107,13 +106,12 @@ public class Server {
 		// odbierz plik od klienta, zaszyfruj go i zapisz na dysku
 		try (OutputStream outputStream = new BufferedOutputStream(
 				new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
-				
-			while (fileSize > 0 && (readSize = ois.read(buffer, 0, (int)Math.min(buffer.length, fileSize))) != -1)
-			{
-			  outputStream.write(buffer,0,readSize);
-			  fileSize -= readSize;
+
+			while (fileSize > 0 && (readSize = ois.read(buffer, 0, (int) Math.min(buffer.length, fileSize))) != -1) {
+				outputStream.write(buffer, 0, readSize);
+				fileSize -= readSize;
 			}
-			
+
 			System.out.println("Server received, encrypted and saved file");
 		}
 
@@ -121,13 +119,24 @@ public class Server {
 
 	}
 
-	private static PublicKey publicKeyFromString(String pub)
-			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	private static PublicKey publicKeyFromString(String pub) throws Exception {
 		byte[] bytes = Base64.getDecoder().decode(pub);
 		X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
 		KeyFactory kf = KeyFactory.getInstance("RSA");
 		PublicKey pubKey = kf.generatePublic(ks);
 		return pubKey;
+	}
+
+	private static byte[] intToByteArray(int data) {
+
+		byte[] result = new byte[4];
+
+		result[0] = (byte) ((data & 0xFF000000) >> 24);
+		result[1] = (byte) ((data & 0x00FF0000) >> 16);
+		result[2] = (byte) ((data & 0x0000FF00) >> 8);
+		result[3] = (byte) ((data & 0x000000FF) >> 0);
+
+		return result;
 	}
 
 }
