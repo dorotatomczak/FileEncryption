@@ -33,3 +33,5 @@ Server/encrypted/*
 
 Client/encrypted/*
 !Client/encrypted/.gitkeep
+
+Client/decrypted/*

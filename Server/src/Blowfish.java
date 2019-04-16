@@ -1,14 +1,10 @@
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -30,23 +26,30 @@ public class Blowfish {
 		return cipher;
 	}
 	
-	public String encryptKey(PublicKey rsaPublicKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
-			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public String encryptKey(PublicKey rsaPublicKey) throws Exception {
+        return Base64.getEncoder().encodeToString(RSA.encrypt(rsaPublicKey, key));
+	}
+	
+	public String encryptString(PublicKey rsaPublicKey) throws Exception{
         Cipher rsa;
         rsa = Cipher.getInstance("RSA");
         rsa.init(Cipher.ENCRYPT_MODE, rsaPublicKey);
         return Base64.getEncoder().encodeToString(rsa.doFinal(key));
 	}
 	
+	public String getVector() {
+		return Base64.getEncoder().encodeToString(vector);
+	}
+	
 
-	public Blowfish(String mode) throws NoSuchAlgorithmException, NoSuchPaddingException,
-			InvalidKeyException, InvalidAlgorithmParameterException {
+	public Blowfish(String mode) throws Exception {
 
 		key = generateSessionKey();
 		
 		vector = new byte[VECTOR_SIZE];
 		SecureRandom srandom = new SecureRandom();
 		srandom.nextBytes(vector);
+		System.out.println(bytesToHex(vector));
 
 		IvParameterSpec ivSpec = new IvParameterSpec(vector);
 		SecretKeySpec keySpec = new SecretKeySpec(key, "Blowfish");
@@ -83,4 +86,6 @@ public class Blowfish {
 		}
 		return new String(hexChars);
 	}
+	
+	
 }
