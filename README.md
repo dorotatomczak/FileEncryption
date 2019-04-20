@@ -8,7 +8,7 @@
 	Java/jre7/lib
 4. Utworzyć bazę danych o nazwie BskDB, wykonać db/create.sql
 
-
+Działanie programu:
 1. Klient wybiera button "Encrypt" -> metoda encryptFile w MainController.java -> po wybraniu pliku uruchamia się task EncryptTask. Na razie na sztywno są ustawione jego argumenty. Trzeba będzie dorobić pola i inne takie, żeby wczytywać input od użytkownika (tryb, dlugość podbloku dla trybów CFB i OFB).
 2. ładowany jest public key obecnie zalogowanego użytkownika (rsa keys są tworzone po rejestracji). To trzeba bedzie zmienic na public key wybranego użytkownika z listy (albo użytkownikow, nwm). Tworzony jest json z danymi do enkrypcji (narazie public key, fileName, tryb)
 3. Wysyłany jest json 
@@ -20,5 +20,3 @@
 
 Nie ma deszyfrowania, szyfrowanie najbardziej podstawowe (dla cfb i ofb nie ma tych podbloków ale jeszcze nwm o co z tym chodzi)
 Aa, jeszcze trzeba w jsonie zwrotnym dodac info o wielkosci klucza sesyjnego chyba (16 bajtów) - wlasciwie nwm po co to, ale jest napisane w instrukcji
-Nie ma paska postępu
-Nie ma gui
