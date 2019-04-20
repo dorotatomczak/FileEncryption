@@ -25,6 +25,9 @@ public class DecryptTask extends Task<Void> {
 	@Override
 	protected Void call() throws Exception {
 		
+		updateMessage("Inizjalizacja...");
+		updateProgress(0,100);
+		
 		// odszyfruj plik
 		try (FileInputStream fileInputStream = new FileInputStream(file);
 				BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream)) {
@@ -41,17 +44,30 @@ public class DecryptTask extends Task<Void> {
 
 			byte[] buffer = new byte[4096];
 			int readSize;
-			File encFile = new File("./decrypted/", file.getName());
-			file.createNewFile();
+			File decFile = new File("./decrypted/", file.getName());
+			decFile.createNewFile();
+			long fileSize = file.length() - jsonSize;
+			long decrypted = 0;
+			
 			try (OutputStream outputStream = new BufferedOutputStream(
-					new CipherOutputStream(new FileOutputStream(encFile), blowfish.getCipher()))) {
+					new CipherOutputStream(new FileOutputStream(decFile), blowfish.getCipher()))) {
+				
+				updateMessage("Deszyfracja");
 
 				while ((readSize = bufferedInputStream.read(buffer)) != -1) {
 					outputStream.write(buffer, 0, readSize);
+					decrypted += readSize;
+					updateProgress(decrypted, fileSize);
 				}
 
 				System.out.println("Client decrypted file");
 			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			updateMessage("Gotowe");
+			updateProgress(100,100);
 		}
 
 		return null;

@@ -42,9 +42,9 @@ public class LoginController {
 		String hash = saltyhash.substring(44);
 		
 		if (PasswordUtils.verifyPassword(passwordField.getText(), hash, salt)) {
-			LoggedInUser.loggedInUser = user;
+			LoggedInUser.login(user);
 			Stage stage = (Stage) loginButton.getScene().getWindow();
-			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Main.fxml"));
+			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Encryption.fxml"));
 		}
 		else {
 			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);

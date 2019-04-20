@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 public class Server {
 
 	static final int PORT = 1234;
-	private static final String FILE_TO_ENCRYPT_PATH = "C:\\Users\\Dorota\\Pictures\\100lat.png";
+	private static final String FILE_TO_ENCRYPT_PATH = "F:\\Filmy\\Konie\\MojaPasja.avi";
 
 	public static void main(String[] args) {
 
@@ -51,6 +51,9 @@ public class Server {
 		out.writeUTF(fileName);
 
 		File file = new File(".", "tmp");
+		
+		// send file size to enable client to track progress
+		out.writeLong(file.length());
 
 		// send encrypted file
 		try (FileInputStream fis = new FileInputStream(file)) {
@@ -59,7 +62,7 @@ public class Server {
 			while ((readSize = fis.read(buffer)) != -1) {
 				out.write(buffer, 0, readSize);
 			}
-			System.out.println("Server sent encryptd file");
+			System.out.println("Server sent encrypted file");
 		}
 
 		// delete file
@@ -94,7 +97,7 @@ public class Server {
 			fos.write(intToByteArray(jsonSize));
 			fos.write(jsonDDetails.getBytes());
 		}
-
+		
 		byte[] buffer = new byte[4096];
 		int readSize;
 
