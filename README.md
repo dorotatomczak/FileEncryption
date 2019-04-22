@@ -8,8 +8,7 @@
 	Java/jre7/lib
 4. Utworzyć bazę danych o nazwie BskDB, wykonać db/create.sql
 
-
-1. Klient wybiera button "Encrypt" -> metoda encryptFile w MainController.java -> po wybraniu pliku uruchamia się task EncryptTask. N
+1. Klient wybiera button "Encrypt" -> metoda encryptFile w MainController.java -> po wybraniu pliku uruchamia się task EncryptTask
 2. Tworzony jest json z danymi do enkrypcji
 3. Wysyłany jest json 
 4. Serwer odbiera jsona od klienta, tworzy obiekt Blowfish a wraz z nim klucz sesyjny. Tworzy jsona z danymi do dekrypcji dla klienta i tam zamieszcza m.in. zaszyfrowany kluczem publicznym klucz sesyjny. Zapisuje jsona do pliku
