@@ -7,13 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
 
 import javafx.concurrent.Task;
 import main.database.User;
-import main.util.LoggedInUser;
 import main.util.RSAKeysUtils;
 
 public class EncryptTask extends Task<Void> {
@@ -22,19 +22,19 @@ public class EncryptTask extends Task<Void> {
 	private String mode;
 	private String fileName;
 	private int blockSize;
-	private List<User> receivers;
+	private List<User> users;
 
-	public EncryptTask(String mode, String fileName, List<User> receivers) {
+	public EncryptTask(String mode, String fileName, List<User> users) {
 		this.mode = mode;
 		this.fileName = fileName;
-		this.receivers = receivers;
+		this.users = users;
 	}
 	
-	public EncryptTask(String mode, String fileName, int blockSize, List<User> receivers) {
+	public EncryptTask(String mode, String fileName, int blockSize, List<User> users) {
 		this.mode = mode;
 		this.fileName = fileName;
 		this.blockSize = blockSize;
-		this.receivers = receivers;
+		this.users = users;
 	}
 
 	@Override
@@ -45,10 +45,9 @@ public class EncryptTask extends Task<Void> {
 
 		// narazie wysy³am do zalogowanego uzytk a nie wybranego z listy
 		//TODO wysylanie do wybranych uzytkownikow
-		PublicKey key = RSAKeysUtils.loadPublicKey(LoggedInUser.loggedInUser.getLogin());
-		String keyString = RSAKeysUtils.publicKeyToString(key);
-
-		EncryptionDetails details = new EncryptionDetails(this.mode, keyString, fileName);
+		List<Receiver> receivers =  createReceivers(users);
+		
+		EncryptionDetails details = new EncryptionDetails(this.mode, receivers, fileName);
 		Gson gson = new Gson();
 		String jsonDetails = gson.toJson(details);
 
@@ -102,5 +101,19 @@ public class EncryptTask extends Task<Void> {
 			updateProgress(100,100);
 		}
 		
+	}
+	
+	private List<Receiver> createReceivers(List<User> users) throws Exception{
+		
+		List<Receiver> receivers = new ArrayList<>();
+
+		for (User user : users) {
+			PublicKey key = RSAKeysUtils.loadPublicKey(user.getLogin());
+			String keyString = RSAKeysUtils.publicKeyToString(key);
+			Receiver receiver = new Receiver(user.getLogin(), keyString);
+			receivers.add(receiver);
+		}
+		
+		return receivers;
 	}
 }

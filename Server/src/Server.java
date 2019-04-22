@@ -13,7 +13,9 @@ import java.net.Socket;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import javax.crypto.CipherOutputStream;
 import com.google.gson.Gson;
@@ -21,7 +23,7 @@ import com.google.gson.Gson;
 public class Server {
 
 	static final int PORT = 1234;
-	private static final String FILE_TO_ENCRYPT_PATH = "F:\\Filmy\\Konie\\MojaPasja.avi";
+	private static final String FILE_TO_ENCRYPT_PATH = "C:\\Users\\Dorota\\Pictures\\Wallpapers\\maxresdefault.jpg";
 
 	public static void main(String[] args) {
 
@@ -75,10 +77,7 @@ public class Server {
 		Gson gson = new Gson();
 		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
 
-		PublicKey pubKey = publicKeyFromString(eDetails.getRsaPublicKey());
-		String mode = eDetails.getMode();
-
-		Blowfish blowfish = new Blowfish(mode);
+		Blowfish blowfish = new Blowfish(eDetails.getMode());
 
 		File fileToEncrypt = new File(FILE_TO_ENCRYPT_PATH);
 		String fileName = eDetails.getFileName() + "."+ getFileExtension(fileToEncrypt.getName());
@@ -88,7 +87,7 @@ public class Server {
 		file.createNewFile();
 
 		// dodanie informacji potrzebnych do deszyfracji pliku
-		DecryptionDetails dDetails = new DecryptionDetails(mode, blowfish.encryptKey(pubKey), blowfish.getVector());
+		DecryptionDetails dDetails = createDecryptionDetails(eDetails, blowfish);
 		String jsonDDetails = gson.toJson(dDetails);
 
 		int jsonSize = (int) jsonDDetails.getBytes().length;
@@ -146,6 +145,20 @@ public class Server {
 			extension = fileName.substring(i + 1);
 		}
 		return extension;
+	}
+	
+	private static DecryptionDetails createDecryptionDetails(EncryptionDetails ed, Blowfish blowfish) throws Exception {
+		
+		List<Receiver> receiversED = ed.getReceivers();
+		List<Receiver> receiversDD = new ArrayList<>();
+	
+		for (Receiver receiverED : receiversED) {
+			PublicKey pubKey = publicKeyFromString(receiverED.getKey());
+			Receiver receiverDD =  new Receiver(receiverED.getLogin(), blowfish.encryptKey(pubKey));
+			receiversDD.add(receiverDD);
+		}
+		
+		return new DecryptionDetails(ed.getMode(),receiversDD, blowfish.getVector());
 	}
 
 }

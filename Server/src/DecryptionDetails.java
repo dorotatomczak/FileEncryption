@@ -1,7 +1,8 @@
+import java.util.List;
 
 public class DecryptionDetails {
 	private String mode;
-	private String sessionKey;
+	private List<Receiver> receivers;
 	private String vector;
 	
 	// TODO dodac pola
@@ -9,10 +10,10 @@ public class DecryptionDetails {
 
 	}
 
-	public DecryptionDetails(String mode, String sessionKey, String vector) {
+	public DecryptionDetails(String mode, List<Receiver> receivers, String vector) {
 		super();
 		this.mode = mode;
-		this.sessionKey = sessionKey;
+		this.receivers = receivers;
 		this.vector = vector;
 	}
 
@@ -24,12 +25,14 @@ public class DecryptionDetails {
 		this.mode = mode;
 	}
 
-	public String getSessionKey() {
-		return sessionKey;
+	
+
+	public List<Receiver> getReceivers() {
+		return receivers;
 	}
 
-	public void setSessionKey(String sessionKey) {
-		this.sessionKey = sessionKey;
+	public void setReceivers(List<Receiver> receivers) {
+		this.receivers = receivers;
 	}
 
 	public String getVector() {

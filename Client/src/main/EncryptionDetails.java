@@ -1,20 +1,31 @@
 package main;
 
+import java.util.List;
+
 public class EncryptionDetails {
 	private String mode;
-	private String rsaPublicKey;
 	private String fileName;
+	private int blockSize;
+	private List<Receiver> receivers;
 
 	// TODO dodac pola
 	public EncryptionDetails() {
 
 	}
 
-	public EncryptionDetails(String mode, String rsaPublicKey, String fileName) {
+	public EncryptionDetails(String mode, List<Receiver> receivers, String fileName) {
 		super();
 		this.mode = mode;
-		this.rsaPublicKey = rsaPublicKey;
+		this.receivers = receivers;
 		this.fileName = fileName;
+	}
+	
+	public EncryptionDetails(String mode, List<Receiver> receivers, String fileName, int blockSize) {
+		super();
+		this.mode = mode;
+		this.receivers = receivers;
+		this.fileName = fileName;
+		this.blockSize = blockSize;
 	}
 
 	public String getMode() {
@@ -25,20 +36,20 @@ public class EncryptionDetails {
 		this.mode = mode;
 	}
 
-	public String getRsaPublicKey() {
-		return rsaPublicKey;
-	}
-
-	public void setRsaPublicKey(String rsaPublicKey) {
-		this.rsaPublicKey = rsaPublicKey;
-	}
-
 	public String getFileName() {
 		return fileName;
 	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public int getBlockSize() {
+		return blockSize;
+	}
+
+	public void setBlockSize(int blockSize) {
+		this.blockSize = blockSize;
 	}
 
 }

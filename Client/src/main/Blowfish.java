@@ -1,6 +1,8 @@
 package main;
 
 import java.util.Base64;
+import java.util.List;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -19,8 +21,14 @@ public class Blowfish {
 
 	public Blowfish(DecryptionDetails dDetails) throws Exception {
 
-		
-		byte[] key = RSAKeysUtils.decrypt(LoggedInUser.loggedInUser, dDetails.getSessionKey());
+		byte[] key;
+		String stringKey = retrieveSessionKey(dDetails.getReceivers());
+		if (stringKey == null) {
+			key = generateFakeKey();
+		}else {
+			key = RSAKeysUtils.decrypt(LoggedInUser.loggedInUser, stringKey);
+		}
+
 		byte[] vector = Base64.getDecoder().decode(dDetails.getVector());
 		
 		System.out.println(RSAKeysUtils.bytesToHex(key));
@@ -32,6 +40,22 @@ public class Blowfish {
 		cipher = Cipher.getInstance(dDetails.getMode());
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 
+	}
+	
+	private String retrieveSessionKey(List<Receiver> receivers) {
+		for (Receiver receiver : receivers) {
+			if (receiver.getLogin().equals(LoggedInUser.loggedInUser.getLogin())) {
+				return receiver.getKey();
+			}
+		}
+		return null;
+	}
+	
+	private byte[] generateFakeKey() {
+		Random r = new Random();
+		byte[] fakeKey = new byte[16];
+		r.nextBytes(fakeKey);
+		return fakeKey;
 	}
 
 }
