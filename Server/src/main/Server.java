@@ -1,3 +1,4 @@
+package main;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -19,6 +20,9 @@ import java.util.List;
 
 import javax.crypto.CipherOutputStream;
 import com.google.gson.Gson;
+
+import blowfish.Blowfish;
+import blowfish.BlowfishCBC;
 
 public class Server {
 
@@ -77,7 +81,7 @@ public class Server {
 		Gson gson = new Gson();
 		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
 
-		Blowfish blowfish = new Blowfish(eDetails.getMode());
+		Blowfish blowfish = Blowfish.getBlowfish(eDetails.getMode());
 
 		File fileToEncrypt = new File(FILE_TO_ENCRYPT_PATH);
 		String fileName = eDetails.getFileName() + "."+ getFileExtension(fileToEncrypt.getName());
@@ -157,8 +161,16 @@ public class Server {
 			Receiver receiverDD =  new Receiver(receiverED.getLogin(), blowfish.encryptKey(pubKey));
 			receiversDD.add(receiverDD);
 		}
-		
-		return new DecryptionDetails(ed.getMode(),receiversDD, blowfish.getVector());
+
+		String mode = ed.getMode().split("/")[1];
+		switch (mode) {
+		case "CBC":
+			String vector = ((BlowfishCBC) blowfish).getVector();
+			return new DecryptionDetails(ed.getMode(),receiversDD, vector);
+		default:
+			return new DecryptionDetails(ed.getMode(),receiversDD);
+		}
 	}
+
 
 }

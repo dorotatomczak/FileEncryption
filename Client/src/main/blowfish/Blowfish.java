@@ -1,19 +1,19 @@
-package main;
+package main.blowfish;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
+import main.DecryptionDetails;
+import main.Receiver;
 import main.util.LoggedInUser;
 import main.util.RSAKeysUtils;
 
 public class Blowfish {
 	
-	private Cipher cipher;
+	protected Cipher cipher;
+	protected byte[] key;
 
 	public Cipher getCipher() {
 		return cipher;
@@ -21,27 +21,15 @@ public class Blowfish {
 
 	public Blowfish(DecryptionDetails dDetails) throws Exception {
 
-		byte[] key;
 		String stringKey = retrieveSessionKey(dDetails.getReceivers());
 		if (stringKey == null) {
 			key = generateFakeKey();
 		}else {
 			key = RSAKeysUtils.decrypt(LoggedInUser.loggedInUser, stringKey);
 		}
-
-		byte[] vector = Base64.getDecoder().decode(dDetails.getVector());
-		
-		System.out.println(RSAKeysUtils.bytesToHex(key));
-		System.out.println(RSAKeysUtils.bytesToHex(vector));
-		
-		IvParameterSpec ivSpec = new IvParameterSpec(vector);
-		SecretKeySpec keySpec = new SecretKeySpec(key, "Blowfish");
-
-		cipher = Cipher.getInstance(dDetails.getMode());
-		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-
 	}
 	
+	// check if logged in user is on he list of receivers. If so, get its encrypted session key
 	private String retrieveSessionKey(List<Receiver> receivers) {
 		for (Receiver receiver : receivers) {
 			if (receiver.getLogin().equals(LoggedInUser.loggedInUser.getLogin())) {
@@ -56,6 +44,20 @@ public class Blowfish {
 		byte[] fakeKey = new byte[16];
 		r.nextBytes(fakeKey);
 		return fakeKey;
+	}
+	
+	public static Blowfish getBlowfish(DecryptionDetails dDetails) throws Exception {
+		
+		String mode = dDetails.getMode().split("/")[1];
+		
+		switch (mode) {
+		case "CBC":
+			return new BlowfishCBC(dDetails);
+		case "ECB":
+			return new BlowfishECB(dDetails);
+		default:
+			return null;
+		}
 	}
 
 }

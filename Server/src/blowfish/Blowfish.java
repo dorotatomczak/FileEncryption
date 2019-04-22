@@ -1,3 +1,4 @@
+package blowfish;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -5,22 +6,18 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import main.RSA;
 
 public class Blowfish {
 
-	private static final int VECTOR_SIZE = 8;
-	
 	/*
 	 * You should use 24 or 32 byte for higher security, but only if you installed
 	 * the Unlimited Strength policy files for your JRE/JDK.
 	 */
 	static final int SESSION_KEY_SIZE = 16;
 
-	private byte[] vector;
-	private Cipher cipher;
-	private byte[] key;
+	protected Cipher cipher;
+	protected byte[] key;
 
 	public Cipher getCipher() {
 		return cipher;
@@ -36,27 +33,10 @@ public class Blowfish {
         rsa.init(Cipher.ENCRYPT_MODE, rsaPublicKey);
         return Base64.getEncoder().encodeToString(rsa.doFinal(key));
 	}
-	
-	public String getVector() {
-		return Base64.getEncoder().encodeToString(vector);
-	}
-	
 
-	public Blowfish(String mode) throws Exception {
+	public Blowfish() throws Exception {
 
 		key = generateSessionKey();
-		
-		vector = new byte[VECTOR_SIZE];
-		SecureRandom srandom = new SecureRandom();
-		srandom.nextBytes(vector);
-		System.out.println(bytesToHex(vector));
-
-		IvParameterSpec ivSpec = new IvParameterSpec(vector);
-		SecretKeySpec keySpec = new SecretKeySpec(key, "Blowfish");
-
-		cipher = Cipher.getInstance(mode);
-		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
 	}
 	
 	private byte[] generateSessionKey() throws NoSuchAlgorithmException {
@@ -85,6 +65,20 @@ public class Blowfish {
 			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 		}
 		return new String(hexChars);
+	}
+	
+	public static Blowfish getBlowfish(String fullMode) throws Exception {
+		
+		String mode = fullMode.split("/")[1];
+		
+		switch (mode) {
+		case "CBC":
+			return new BlowfishCBC(fullMode);
+		case "ECB":
+			return new BlowfishECB(fullMode);
+		default:
+				return null;
+		}
 	}
 	
 	

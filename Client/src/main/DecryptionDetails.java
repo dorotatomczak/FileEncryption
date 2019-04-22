@@ -2,12 +2,12 @@ package main;
 
 import java.util.List;
 
+
 public class DecryptionDetails {
 	private String mode;
 	private List<Receiver> receivers;
 	private String vector;
 	
-	// TODO dodac pola
 	public DecryptionDetails() {
 
 	}
@@ -18,6 +18,12 @@ public class DecryptionDetails {
 		this.receivers = receivers;
 		this.vector = vector;
 	}
+	
+	public DecryptionDetails(String mode, List<Receiver> receivers) {
+		super();
+		this.mode = mode;
+		this.receivers = receivers;
+	}
 
 	public String getMode() {
 		return mode;
@@ -25,8 +31,9 @@ public class DecryptionDetails {
 
 	public void setMode(String mode) {
 		this.mode = mode;
-	}	
+	}
 
+	
 	public List<Receiver> getReceivers() {
 		return receivers;
 	}
@@ -42,7 +49,6 @@ public class DecryptionDetails {
 	public void setVector(String vector) {
 		this.vector = vector;
 	}
-
 
 }
 

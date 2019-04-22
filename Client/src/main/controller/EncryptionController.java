@@ -123,7 +123,8 @@ public class EncryptionController {
 		Task<Void> encryptTask;
 		
 		if (outputLabel.getText() == null || outputLabel.getText().trim().isEmpty() ||
-				selectedMode == null || (blockSizeEnabled && blockSizeChoiceBox.getSelectionModel().isEmpty())) {
+				selectedMode == null || (blockSizeEnabled && blockSizeChoiceBox.getSelectionModel().isEmpty()) ||
+				receiversList.getItems().size() < 1) {
 			DialogUtils.showDialog("Error", "Uzupelnij wszystkie pola", AlertType.INFORMATION);
 			return;
 		}
