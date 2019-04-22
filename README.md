@@ -8,6 +8,7 @@
 	Java/jre7/lib
 4. Utworzyć bazę danych o nazwie BskDB, wykonać db/create.sql
 
+działanie prgramu:
 1. Klient wybiera button "Encrypt" -> metoda encryptFile w MainController.java -> po wybraniu pliku uruchamia się task EncryptTask
 2. Tworzony jest json z danymi do enkrypcji
 3. Wysyłany jest json 
