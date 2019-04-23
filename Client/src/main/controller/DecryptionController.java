@@ -57,6 +57,7 @@ public class DecryptionController {
 	public void logout(ActionEvent event) {
 		LoggedInUser.logout();
 		Stage stage = (Stage) logoutButton.getScene().getWindow();
+		stage.setTitle("");
 		SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Login.fxml"));
 	}
 	// Event Listener on TextField[#intputLabel].onMouseClicked

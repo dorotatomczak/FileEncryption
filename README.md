@@ -17,6 +17,3 @@ działanie prgramu:
 6. serwer wysyła plik klientowi.
 7. Klient odbiera plik (folder encrypted)
 8. Klient wybiera button "Decrypt" -> metoda decryptFile w DecryptionController.java -> po wybraniu pliku uruchamia się task DecryptTask. Klient odczytuje jsona z pliku. Deszyfruje klucz sesyjny swoim kluczem prywatnym.
-
-szyfrowanie i deszyfrowanie najbardziej podstawowe (dla cfb i ofb nie ma tych podbloków ale jeszcze nwm o co z tym chodzi)
-Aa, jeszcze trzeba w jsonie zwrotnym dodac info o wielkosci klucza sesyjnego chyba (16 bajtów) - wlasciwie nwm po co to, ale jest napisane w instrukcji

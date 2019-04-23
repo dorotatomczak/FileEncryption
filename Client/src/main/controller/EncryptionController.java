@@ -107,6 +107,7 @@ public class EncryptionController {
 	public void logout(ActionEvent event) {
 		LoggedInUser.logout();
 		Stage stage = (Stage) logoutButton.getScene().getWindow();
+		stage.setTitle("");
 		SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Login.fxml"));
 	}
 
@@ -128,13 +129,13 @@ public class EncryptionController {
 			DialogUtils.showDialog("Error", "Uzupelnij wszystkie pola", AlertType.INFORMATION);
 			return;
 		}
-		else if (blockSizeEnabled) {
-			List<User> receivers = receiversList.getItems();
-			int blockSize = Integer.valueOf(blockSizeChoiceBox.getValue());
-			encryptTask =  new EncryptTask(buildMode(selectedMode), outputLabel.getText(), blockSize, receivers);
+		
+		List<User> receivers = receiversList.getItems();
+		if (blockSizeEnabled) {
+			String mode = selectedMode+blockSizeChoiceBox.getValue();
+			encryptTask =  new EncryptTask(buildMode(mode), outputLabel.getText(), receivers);
 		}
 		else {
-			List<User> receivers = receiversList.getItems();
 			encryptTask =  new EncryptTask(buildMode(selectedMode), outputLabel.getText(), receivers);
 		}
 		

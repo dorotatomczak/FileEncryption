@@ -3,7 +3,7 @@ package blowfish;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-public class BlowfishECB extends Blowfish {
+public class BlowfishECB extends BlowfishBase {
 
 	public BlowfishECB(String mode) throws Exception {
 		super();

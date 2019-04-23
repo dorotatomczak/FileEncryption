@@ -5,7 +5,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import main.DecryptionDetails;
 
-public class BlowfishECB extends Blowfish{
+public class BlowfishECB extends BlowfishBase{
 
 	public BlowfishECB(DecryptionDetails dDetails) throws Exception {
 		super(dDetails);

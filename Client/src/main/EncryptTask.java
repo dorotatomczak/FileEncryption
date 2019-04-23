@@ -43,8 +43,6 @@ public class EncryptTask extends Task<Void> {
 		updateMessage("Inizjalizacja...");
 		updateProgress(0,100);
 
-		// narazie wysy³am do zalogowanego uzytk a nie wybranego z listy
-		//TODO wysylanie do wybranych uzytkownikow
 		List<Receiver> receivers =  createReceivers(users);
 		
 		EncryptionDetails details = new EncryptionDetails(this.mode, receivers, fileName);

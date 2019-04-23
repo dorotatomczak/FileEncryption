@@ -13,7 +13,7 @@ import javax.crypto.CipherOutputStream;
 import com.google.gson.Gson;
 
 import javafx.concurrent.Task;
-import main.blowfish.Blowfish;
+import main.blowfish.BlowfishBase;
 
 public class DecryptTask extends Task<Void> {
 
@@ -41,7 +41,7 @@ public class DecryptTask extends Task<Void> {
 			bufferedInputStream.read(jsonInBytes);
 			DecryptionDetails dDetails = bytesToJson(jsonInBytes);
 			
-			Blowfish blowfish = Blowfish.getBlowfish(dDetails);
+			BlowfishBase blowfish = BlowfishBase.getBlowfish(dDetails);
 
 			byte[] buffer = new byte[4096];
 			int readSize;

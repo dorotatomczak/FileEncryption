@@ -5,10 +5,8 @@ import java.util.List;
 public class EncryptionDetails {
 	private String mode;
 	private String fileName;
-	private int blockSize;
 	private List<Receiver> receivers;
 
-	// TODO dodac pola
 	public EncryptionDetails() {
 
 	}
@@ -20,14 +18,6 @@ public class EncryptionDetails {
 		this.fileName = fileName;
 	}
 	
-	public EncryptionDetails(String mode, List<Receiver> receivers, String fileName, int blockSize) {
-		super();
-		this.mode = mode;
-		this.receivers = receivers;
-		this.fileName = fileName;
-		this.blockSize = blockSize;
-	}
-
 	public String getMode() {
 		return mode;
 	}
@@ -44,12 +34,11 @@ public class EncryptionDetails {
 		this.fileName = fileName;
 	}
 
-	public int getBlockSize() {
-		return blockSize;
+	public List<Receiver> getReceivers() {
+		return receivers;
 	}
 
-	public void setBlockSize(int blockSize) {
-		this.blockSize = blockSize;
+	public void setReceivers(List<Receiver> receivers) {
+		this.receivers = receivers;
 	}
-
 }

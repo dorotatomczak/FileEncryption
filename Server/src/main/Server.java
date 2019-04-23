@@ -21,8 +21,8 @@ import java.util.List;
 import javax.crypto.CipherOutputStream;
 import com.google.gson.Gson;
 
+import blowfish.BlowfishBase;
 import blowfish.Blowfish;
-import blowfish.BlowfishCBC;
 
 public class Server {
 
@@ -81,7 +81,7 @@ public class Server {
 		Gson gson = new Gson();
 		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
 
-		Blowfish blowfish = Blowfish.getBlowfish(eDetails.getMode());
+		BlowfishBase blowfish = BlowfishBase.getBlowfish(eDetails.getMode());
 
 		File fileToEncrypt = new File(FILE_TO_ENCRYPT_PATH);
 		String fileName = eDetails.getFileName() + "."+ getFileExtension(fileToEncrypt.getName());
@@ -151,7 +151,7 @@ public class Server {
 		return extension;
 	}
 	
-	private static DecryptionDetails createDecryptionDetails(EncryptionDetails ed, Blowfish blowfish) throws Exception {
+	private static DecryptionDetails createDecryptionDetails(EncryptionDetails ed, BlowfishBase blowfish) throws Exception {
 		
 		List<Receiver> receiversED = ed.getReceivers();
 		List<Receiver> receiversDD = new ArrayList<>();
@@ -164,11 +164,11 @@ public class Server {
 
 		String mode = ed.getMode().split("/")[1];
 		switch (mode) {
-		case "CBC":
-			String vector = ((BlowfishCBC) blowfish).getVector();
-			return new DecryptionDetails(ed.getMode(),receiversDD, vector);
-		default:
+		case "ECB":
 			return new DecryptionDetails(ed.getMode(),receiversDD);
+		default:
+			String vector = ((Blowfish) blowfish).getVector();
+			return new DecryptionDetails(ed.getMode(),receiversDD, vector);
 		}
 	}
 

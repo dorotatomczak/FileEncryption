@@ -44,6 +44,7 @@ public class LoginController {
 		if (PasswordUtils.verifyPassword(passwordField.getText(), hash, salt)) {
 			LoggedInUser.login(user);
 			Stage stage = (Stage) loginButton.getScene().getWindow();
+			stage.setTitle("Uzytkownik "+user.getLogin());
 			SceneSwitcher.switchScene(stage, getClass().getResource("../resource/Encryption.fxml"));
 		}
 		else {
