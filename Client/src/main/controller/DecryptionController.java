@@ -41,7 +41,7 @@ public class DecryptionController {
 	@FXML
 	public void initialize(){
 		file = null;
-		File initialDirectory = new File("..\\Client\\encrypted");
+		File initialDirectory = new File("../Client/encrypted");
 		fileChooser =  new FileChooser();
 		fileChooser.setInitialDirectory(initialDirectory);
 	}

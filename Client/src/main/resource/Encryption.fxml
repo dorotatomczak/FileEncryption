@@ -10,7 +10,7 @@
 <AnchorPane prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.controller.EncryptionController">
 	<children>
 		<Button fx:id="logoutButton" layoutX="566.0" layoutY="14.0" mnemonicParsing="false" onAction="#logout" text="Wyloguj" />
-		<Button fx:id="decryptButton" layoutX="464.0" layoutY="14.0" mnemonicParsing="false" onAction="#decrypt" text="Deszyfrowanie" />
+		<Button fx:id="decryptButton" layoutX="452.0" layoutY="14.0" mnemonicParsing="false" onAction="#decrypt" text="Deszyfrowanie" />
 		<Label layoutX="14.0" layoutY="9.0" text="Szyfrowanie blowfish">
 			<font>
 				<Font size="24.0" />
@@ -39,8 +39,8 @@
 		<Label layoutX="346.0" layoutY="200.0" prefHeight="17.0" prefWidth="60.0" text="Odbiorcy" />
 		<ListView fx:id="usersList" layoutX="123.0" layoutY="226.0" prefHeight="140.0" prefWidth="170.0" />
 		<Button fx:id="encryptButton" layoutX="277.0" layoutY="441.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="25.0" prefWidth="86.0" text="Szyfruj" />
-		<ProgressBar fx:id="progressBar" layoutX="135.0" layoutY="406.0" prefHeight="18.0" prefWidth="491.0" progress="0.0" />
-		<Label fx:id="progressLabel" layoutX="13.0" layoutY="407.0" prefHeight="17.0" prefWidth="110.0" />
+		<ProgressBar fx:id="progressBar" layoutX="8.0" layoutY="404.0" prefHeight="18.0" prefWidth="491.0" progress="0.0" />
+		<Label fx:id="progressLabel" layoutX="511.0" layoutY="405.0" prefHeight="17.0" prefWidth="110.0" />
       <ListView fx:id="receiversList" layoutX="346.0" layoutY="226.0" prefHeight="140.0" prefWidth="170.0" />
       <Label layoutX="125.0" layoutY="200.0" text="Użytkownicy" />
       <Label fx:id="add" layoutX="301.0" layoutY="267.0" onMouseClicked="#addReceiver" text="Dodaj" />

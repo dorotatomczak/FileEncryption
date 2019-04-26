@@ -26,8 +26,8 @@ import main.database.User;
 public class RSAKeysUtils {
 
 	private static final int KEY_SIZE = 2048;
-	private static final String PATH_PUB = "\\keys\\pub\\";
-	private static final String PATH_PVT = "\\keys\\pvt\\";
+	private static final String PATH_PUB = "/keys/pub/";
+	private static final String PATH_PVT = "/keys/pvt/";
 	private static final int VECTOR_SIZE = 8;
 
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -77,6 +77,7 @@ public class RSAKeysUtils {
 
 		try {
 			File file = new File(path);
+			System.out.println(path);
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file);
 			out.write(key);
@@ -137,7 +138,7 @@ public class RSAKeysUtils {
 		return Base64.getEncoder().encodeToString(ks.getEncoded());
 	}
 
-	// Blowfish, CBC, password (funkcja skrótu: PBKDF2WithHmacSHA512)
+	// Blowfish, CBC, password (funkcja skrï¿½tu: PBKDF2WithHmacSHA512)
 	private static byte[] encryptPrivateKey(User user, PrivateKey pvt) throws Exception {
 
 		// get key

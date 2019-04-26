@@ -18,7 +18,7 @@ import main.util.RSAKeysUtils;
 
 public class EncryptTask extends Task<Void> {
 
-	private static final int port = 1234;
+	private static final int port = 1235;
 	private String mode;
 	private String fileName;
 	private int blockSize;
@@ -51,7 +51,7 @@ public class EncryptTask extends Task<Void> {
 
 		// u mnie na VM: 10.0.2.2
 		// na windowsie zmienic na localhost
-		try (Socket socket = new Socket("localhost", port); 
+		try (Socket socket = new Socket("10.0.2.2", port); 
 				DataOutputStream out =  new DataOutputStream(socket.getOutputStream());
 				DataInputStream ois =  new DataInputStream(socket.getInputStream())) {
 

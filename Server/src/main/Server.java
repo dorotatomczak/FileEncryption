@@ -26,7 +26,7 @@ import blowfish.Blowfish;
 
 public class Server {
 
-	static final int PORT = 1234;
+	static final int PORT = 1235;
 	private static final String FILE_TO_ENCRYPT_PATH = "C:\\Users\\Dorota\\Pictures\\Wallpapers\\maxresdefault.jpg";
 
 	public static void main(String[] args) {
