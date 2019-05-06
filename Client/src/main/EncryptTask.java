@@ -21,19 +21,11 @@ public class EncryptTask extends Task<Void> {
 	private static final int port = 1235;
 	private String mode;
 	private String fileName;
-	private int blockSize;
 	private List<User> users;
 
 	public EncryptTask(String mode, String fileName, List<User> users) {
 		this.mode = mode;
 		this.fileName = fileName;
-		this.users = users;
-	}
-	
-	public EncryptTask(String mode, String fileName, int blockSize, List<User> users) {
-		this.mode = mode;
-		this.fileName = fileName;
-		this.blockSize = blockSize;
 		this.users = users;
 	}
 
@@ -51,7 +43,7 @@ public class EncryptTask extends Task<Void> {
 
 		// u mnie na VM: 10.0.2.2
 		// na windowsie zmienic na localhost
-		try (Socket socket = new Socket("10.0.2.2", port); 
+		try (Socket socket = new Socket("localhost", port); 
 				DataOutputStream out =  new DataOutputStream(socket.getOutputStream());
 				DataInputStream ois =  new DataInputStream(socket.getInputStream())) {
 

@@ -5,6 +5,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javafx.event.ActionEvent;
 import javafx.scene.control.PasswordField;
 import main.database.User;
@@ -22,7 +26,7 @@ public class LoginController {
 	private Button loginButton;
 	@FXML
 	private Button registerButton;
-
+	
 	// Event Listener on Button[#loginButton].onAction
 	@FXML
 	public void onLoginButtonClick(ActionEvent event) {
@@ -32,10 +36,10 @@ public class LoginController {
 		
 		User user = new UserDao().getUserByLogin(loginField.getText());
 		
-		if(user == null) {
-			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);
-			return;
-		}
+//		if(user == null) {
+//			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);
+//			return;
+//		}
 		
 		String saltyhash = user.getPassword();
 		String salt = saltyhash.substring(0, 44);

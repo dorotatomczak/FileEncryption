@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//TODO kiedy catch exception to wyœwietliæ okienko o b³êdzie
 
 public class UserDao {
 
