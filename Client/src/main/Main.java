@@ -2,9 +2,6 @@ package main;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import main.database.User;
-import main.database.UserDao;
-import main.util.RSAKeysUtils;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +17,7 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("resource/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
+			primaryStage.setOnCloseRequest(e ->System.exit(0));
 		} catch(Exception e) {;
 			e.printStackTrace();
 		}

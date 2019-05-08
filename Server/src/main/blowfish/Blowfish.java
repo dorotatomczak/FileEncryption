@@ -1,4 +1,4 @@
-package blowfish;
+package main.blowfish;
 
 import java.security.SecureRandom;
 import java.util.Base64;

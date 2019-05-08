@@ -51,6 +51,8 @@ public class EncryptTask extends Task<Void> {
 			receive(ois);
 		} catch (IOException e) {
 			e.printStackTrace();
+			updateMessage("");
+			updateProgress(0,0);
 		}
 		return null;
 	}

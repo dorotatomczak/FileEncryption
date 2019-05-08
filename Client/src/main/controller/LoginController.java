@@ -6,9 +6,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import javafx.event.ActionEvent;
 import javafx.scene.control.PasswordField;
 import main.database.User;
