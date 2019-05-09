@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.TextField;
@@ -12,7 +13,7 @@ import javafx.scene.control.Label;
 
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import main.MainThread;
+import main.ServerTask;
 
 public class ServerController {
 	@FXML
@@ -26,8 +27,10 @@ public class ServerController {
 	
 	@FXML
 	public void initialize(){
-		executor.submit(new MainThread());
-		fileTextField.setText(MainThread.fileToEncrypt.getAbsolutePath());
+		Task serverTask = new ServerTask();
+		executor.submit(serverTask);
+		infoLabel.textProperty().bind(serverTask.messageProperty());
+		fileTextField.setText(ServerTask.fileToEncrypt.getAbsolutePath());
 	}
 
 	// Event Listener on TextField[#fileTextField].onMouseClicked
@@ -37,7 +40,7 @@ public class ServerController {
         if (file == null){
             return;
         }
-        MainThread.fileToEncrypt = file;
+        ServerTask.fileToEncrypt = file;
         fileTextField.setText(file.getAbsolutePath());
 	}
 }

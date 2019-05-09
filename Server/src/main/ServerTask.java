@@ -23,27 +23,37 @@ import javax.crypto.CipherOutputStream;
 
 import com.google.gson.Gson;
 
+import javafx.concurrent.Task;
 import main.blowfish.Blowfish;
 import main.blowfish.BlowfishBase;
 
-public class MainThread extends Thread{
-	
+public class ServerTask extends Task {
+
 	static final int PORT = 1235;
-	//TODO zmienic sciezke
-	public static volatile File fileToEncrypt = new File("C:\\Programowanie\\BSK\\Server\\src\\main\\resource\\default.jpg");
+	// TODO zmienic sciezke
+	public static volatile File fileToEncrypt = new File(
+			"../Server/main/resource/default.jpg");
 	
-	public void run() {
+	public ServerTask() {
+		String workingDir = System.getProperty("user.dir");
+		fileToEncrypt = new File(workingDir+"/src/main/resource/default.jpg");
+	}
+
+	@Override
+	protected Object call() throws Exception {
 		
-		System.out.println(fileToEncrypt.exists());
-		
+		updateMessage("Serwer wystartowal");
+
 		try (ServerSocket serverSocket = new ServerSocket(PORT)) {
 
 			while (true) {
+				updateMessage("Serwer nasluchuje na porcie "+PORT);
+				
 				try (Socket socket = serverSocket.accept();
 						DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 						DataInputStream ois = new DataInputStream(socket.getInputStream())) {
 
-					System.out.println("Received a connection from " + socket);
+					updateMessage("Serwer otrzymal polaczenie od "+socket);
 
 					String fileName = receiveAndEncrypt(ois);
 					sendEncrypted(out, fileName);
@@ -55,6 +65,7 @@ public class MainThread extends Thread{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	private void sendEncrypted(DataOutputStream out, String fileName) throws IOException {
@@ -62,7 +73,7 @@ public class MainThread extends Thread{
 		out.writeUTF(fileName);
 
 		File file = new File(".", "tmp");
-		
+
 		// send file size to enable client to track progress
 		out.writeLong(file.length());
 
@@ -70,10 +81,11 @@ public class MainThread extends Thread{
 		try (FileInputStream fis = new FileInputStream(file)) {
 			byte[] buffer = new byte[4096];
 			int readSize;
+			updateMessage("Wysy³anie zaszyfrowanego pliku do klienta");
 			while ((readSize = fis.read(buffer)) != -1) {
 				out.write(buffer, 0, readSize);
 			}
-			System.out.println("Server sent encrypted file");
+			updateMessage("Zakoñczenie wysy³ania pliku");
 		}
 
 		// delete file
@@ -85,10 +97,12 @@ public class MainThread extends Thread{
 		// pobranie informacji o szyfrowaniu
 		Gson gson = new Gson();
 		EncryptionDetails eDetails = gson.fromJson(new StringReader(ois.readUTF()), EncryptionDetails.class);
+		
+		updateMessage("Serwer odebra³ dane o enkrypcji od klienta");
 
 		BlowfishBase blowfish = BlowfishBase.getBlowfish(eDetails.getMode());
 
-		String fileName = eDetails.getFileName() + "."+ getFileExtension(fileToEncrypt.getName());
+		String fileName = eDetails.getFileName() + "." + getFileExtension(fileToEncrypt.getName());
 		System.out.println(fileName);
 
 		File file = new File(".", "tmp");
@@ -104,7 +118,7 @@ public class MainThread extends Thread{
 			fos.write(intToByteArray(jsonSize));
 			fos.write(jsonDDetails.getBytes());
 		}
-		
+
 		byte[] buffer = new byte[4096];
 		int readSize;
 
@@ -113,12 +127,14 @@ public class MainThread extends Thread{
 				BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 				OutputStream outputStream = new BufferedOutputStream(
 						new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
+			
+			updateMessage("Szyfrowanie pliku");
 
 			while ((readSize = bufferedInputStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, readSize);
 			}
 
-			System.out.println("Server encrypted and saved file");
+			System.out.println("Zakoñczono szyfrowanie pliku");
 		}
 
 		return fileName;
@@ -154,25 +170,25 @@ public class MainThread extends Thread{
 		}
 		return extension;
 	}
-	
+
 	private DecryptionDetails createDecryptionDetails(EncryptionDetails ed, BlowfishBase blowfish) throws Exception {
-		
+
 		List<Receiver> receiversED = ed.getReceivers();
 		List<Receiver> receiversDD = new ArrayList<>();
-	
+
 		for (Receiver receiverED : receiversED) {
 			PublicKey pubKey = publicKeyFromString(receiverED.getKey());
-			Receiver receiverDD =  new Receiver(receiverED.getLogin(), blowfish.encryptKey(pubKey));
+			Receiver receiverDD = new Receiver(receiverED.getLogin(), blowfish.encryptKey(pubKey));
 			receiversDD.add(receiverDD);
 		}
 
 		String mode = ed.getMode().split("/")[1];
 		switch (mode) {
 		case "ECB":
-			return new DecryptionDetails(ed.getMode(),receiversDD);
+			return new DecryptionDetails(ed.getMode(), receiversDD);
 		default:
 			String vector = ((Blowfish) blowfish).getVector();
-			return new DecryptionDetails(ed.getMode(),receiversDD, vector);
+			return new DecryptionDetails(ed.getMode(), receiversDD, vector);
 		}
 	}
 

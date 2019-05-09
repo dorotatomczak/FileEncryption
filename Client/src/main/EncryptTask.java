@@ -43,7 +43,7 @@ public class EncryptTask extends Task<Void> {
 
 		// u mnie na VM: 10.0.2.2
 		// na windowsie zmienic na localhost
-		try (Socket socket = new Socket("localhost", port); 
+		try (Socket socket = new Socket("10.0.2.2", port); 
 				DataOutputStream out =  new DataOutputStream(socket.getOutputStream());
 				DataInputStream ois =  new DataInputStream(socket.getInputStream())) {
 
@@ -61,6 +61,8 @@ public class EncryptTask extends Task<Void> {
 
 		// send data
 		out.writeUTF(jsonDetails);
+		
+		updateMessage("Szyfrowanie");
 
 		System.out.println("Client sent encryption details");
 	}
@@ -76,7 +78,7 @@ public class EncryptTask extends Task<Void> {
 
 		try (FileOutputStream fos = new FileOutputStream(file)) {
 			
-			updateMessage("Szyfrowanie");
+			updateMessage("Przesy³anie pliku");
 			updateProgress(0,100);
 			
 			long fileSize = ois.readLong();
