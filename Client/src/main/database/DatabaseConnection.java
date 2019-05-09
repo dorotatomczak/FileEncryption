@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 	
-	// TODO Tymczasowe rozwi¹zanie, trzeba bêdzie dostosowaæ do maszyny wirtualnej
-	public static String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=BskDB;integratedSecurity=true";
+	//TODO user i haslo nie powinny byc podane jawnie
+	public static String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=BskDB;integratedSecurity=false;user=linux;password=linux;";
 	private static DatabaseConnection instance;
 	private Connection connection;
 	

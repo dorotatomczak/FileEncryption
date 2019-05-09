@@ -18,22 +18,14 @@ import main.util.RSAKeysUtils;
 
 public class EncryptTask extends Task<Void> {
 
-	private static final int port = 1234;
+	private static final int port = 1235;
 	private String mode;
 	private String fileName;
-	private int blockSize;
 	private List<User> users;
 
 	public EncryptTask(String mode, String fileName, List<User> users) {
 		this.mode = mode;
 		this.fileName = fileName;
-		this.users = users;
-	}
-	
-	public EncryptTask(String mode, String fileName, int blockSize, List<User> users) {
-		this.mode = mode;
-		this.fileName = fileName;
-		this.blockSize = blockSize;
 		this.users = users;
 	}
 
@@ -59,6 +51,8 @@ public class EncryptTask extends Task<Void> {
 			receive(ois);
 		} catch (IOException e) {
 			e.printStackTrace();
+			updateMessage("");
+			updateProgress(0,0);
 		}
 		return null;
 	}
