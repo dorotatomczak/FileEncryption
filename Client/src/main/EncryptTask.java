@@ -43,7 +43,7 @@ public class EncryptTask extends Task<Void> {
 
 		// u mnie na VM: 10.0.2.2
 		// na windowsie zmienic na localhost
-		try (Socket socket = new Socket("10.0.2.2", port); 
+		try (Socket socket = new Socket("192.168.56.1", port); 
 				DataOutputStream out =  new DataOutputStream(socket.getOutputStream());
 				DataInputStream ois =  new DataInputStream(socket.getInputStream())) {
 

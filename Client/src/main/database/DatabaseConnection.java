@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 	
 	//TODO user i haslo nie powinny byc podane jawnie
-	public static String connectionUrl = "jdbc:sqlserver://10.0.2.2:1433;databaseName=BskDB;integratedSecurity=false;user=linux;password=linux;";
+	public static String connectionUrl = "jdbc:sqlserver://192.168.56.1:1433;databaseName=BskDB;integratedSecurity=false;user=linux;password=linux;";
 	private static DatabaseConnection instance;
 	private Connection connection;
 	
