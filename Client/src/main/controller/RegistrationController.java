@@ -66,20 +66,20 @@ public class RegistrationController {
 
 		if (!login.matches("[A-Za-z0-9]{4,30}")) {
 			DialogUtils.showDialog("Nieprawid³owy login",
-					"Login musi mieæ od 4 do 30 znaków. " + "Dozwolone s¹ du¿e i ma³e litery oraz cyfry.",
+					"Login musi mieæ od 4 do 30 znaków. " + "Dozwolone s¹ duze i ma³e litery oraz cyfry.",
 					AlertType.INFORMATION);
 			return false;
 		}
 		if (new UserDao().getUserByLogin(login) != null) {
-			DialogUtils.showDialog("Nieprawid³owy login", "Login jest ju¿ zajêty.", AlertType.INFORMATION);
+			DialogUtils.showDialog("Nieprawidlowy login", "Login jest ju¿ zajety.", AlertType.INFORMATION);
 			return false;
 		}
 		if (password.length() < 4) {
-			DialogUtils.showDialog("Nieprawid³owe has³o", "Has³o musi mieæ >= 4 znaki.", AlertType.INFORMATION);
+			DialogUtils.showDialog("Nieprawidlowe haslo", "Haslo musi miec >= 4 znaki.", AlertType.INFORMATION);
 			return false;
 		}
 		if (repeatPassword.length() < 4 || !password.equals(repeatPassword)) {
-			DialogUtils.showDialog("Nieprawid³owe has³o", "Has³a nie s¹ takie same.", AlertType.INFORMATION);
+			DialogUtils.showDialog("Nieprawidlowe haslo", "Has³a nie sa takie same.", AlertType.INFORMATION);
 			return false;
 		}
 

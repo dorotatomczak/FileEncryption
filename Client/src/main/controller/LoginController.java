@@ -33,10 +33,10 @@ public class LoginController {
 		
 		User user = new UserDao().getUserByLogin(loginField.getText());
 		
-//		if(user == null) {
-//			DialogUtils.showDialog("B³¹d logowania", "Niepoprawny login lub has³o.", AlertType.INFORMATION);
-//			return;
-//		}
+		if(user == null) {
+			DialogUtils.showDialog("B³¹d logowania", "U¿ytkownik nie istnieje", AlertType.INFORMATION);
+			return;
+		}
 		
 		String saltyhash = user.getPassword();
 		String salt = saltyhash.substring(0, 44);

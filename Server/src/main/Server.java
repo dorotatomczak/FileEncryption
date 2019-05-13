@@ -20,6 +20,7 @@ public class Server extends Application{
 			Parent root = FXMLLoader.load(getClass().getResource("resource/Server.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
+			primaryStage.setTitle("Serwer");
 			primaryStage.show();
 			primaryStage.setOnCloseRequest(e ->System.exit(0));
 		} catch(Exception e) {;

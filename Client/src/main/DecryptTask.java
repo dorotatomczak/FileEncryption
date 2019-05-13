@@ -54,12 +54,17 @@ public class DecryptTask extends Task<Void> {
 					new CipherOutputStream(new FileOutputStream(decFile), blowfish.getCipher()))) {
 				
 				updateMessage("Deszyfracja");
+				long czasRozpoczecia = System.currentTimeMillis();
 
 				while ((readSize = bufferedInputStream.read(buffer)) != -1) {
 					outputStream.write(buffer, 0, readSize);
 					decrypted += readSize;
 					updateProgress(decrypted, fileSize);
 				}
+				
+				long czasZakonczenia = System.currentTimeMillis();
+			    long czasTrwania = czasZakonczenia - czasRozpoczecia;
+			    System.out.println("Czas deszyfrowania: " + czasTrwania);
 
 				System.out.println("Client decrypted file");
 			}

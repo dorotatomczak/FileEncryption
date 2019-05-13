@@ -82,9 +82,16 @@ public class ServerTask extends Task {
 			byte[] buffer = new byte[4096];
 			int readSize;
 			updateMessage("Wysy³anie zaszyfrowanego pliku do klienta");
+			
+			long czasRozpoczecia = System.currentTimeMillis();
+			
 			while ((readSize = fis.read(buffer)) != -1) {
 				out.write(buffer, 0, readSize);
 			}
+			long czasZakonczenia = System.currentTimeMillis();
+		    long czasTrwania = czasZakonczenia - czasRozpoczecia;
+		    System.out.println("Czas przesy³ania: " + czasTrwania);
+		    
 			updateMessage("Zakoñczenie wysy³ania pliku");
 		}
 
@@ -129,12 +136,17 @@ public class ServerTask extends Task {
 						new CipherOutputStream(new FileOutputStream(file, true), blowfish.getCipher()))) {
 			
 			updateMessage("Szyfrowanie pliku");
+			long czasRozpoczecia = System.currentTimeMillis();
 
 			while ((readSize = bufferedInputStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, readSize);
 			}
+			
+			long czasZakonczenia = System.currentTimeMillis();
+			long czasTrwania = czasZakonczenia - czasRozpoczecia;
+			System.out.println("Czas szyfrowania: " + czasTrwania);
 
-			System.out.println("Zakoñczono szyfrowanie pliku");
+			System.out.println("Zakonczono szyfrowanie pliku");
 		}
 
 		return fileName;

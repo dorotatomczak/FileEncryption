@@ -78,7 +78,7 @@ public class EncryptTask extends Task<Void> {
 
 		try (FileOutputStream fos = new FileOutputStream(file)) {
 			
-			updateMessage("Przesy³anie pliku");
+			updateMessage("Przesylanie pliku");
 			updateProgress(0,100);
 			
 			long fileSize = ois.readLong();
