@@ -30,9 +30,8 @@ import main.blowfish.BlowfishBase;
 public class ServerTask extends Task {
 
 	static final int PORT = 1235;
-	// TODO zmienic sciezke
-	public static volatile File fileToEncrypt = new File(
-			"../Server/main/resource/default.jpg");
+
+	public static volatile File fileToEncrypt;
 	
 	public ServerTask() {
 		String workingDir = System.getProperty("user.dir");
